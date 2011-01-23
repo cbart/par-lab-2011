@@ -9,10 +9,10 @@ namespace canon
 {
 
 
-template<typename result_t, result_t value>
+template<typename result_t, long value>
 result_t constant()
 {
-    return value;
+    return static_cast<result_t>(value);
 }
 
 
