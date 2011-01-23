@@ -1,2 +1,6 @@
+CXX=g++ -Wall -pedantic
+ARCH=-march=native
+CXXFLAGS=-O3 -fno-exceptions
+LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed
 all:
-	g++ -Wall -pedantic -g -O0 -o canon canon.cc
+	${CXX} ${ARCH} ${CXXFLAGS} ${LDFLAGS} -o canon canon.cc

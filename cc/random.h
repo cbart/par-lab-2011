@@ -60,7 +60,7 @@ typename random_generator<result_t>::result_type random_generator<result_t>::ope
 }
 
 
-}
+}  // namespace canon
 
 
 #endif
