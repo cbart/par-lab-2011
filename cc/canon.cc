@@ -1,6 +1,8 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
+#define DEBUGLEVEL 3
+
 #include <iostream>
 #include <boost/mpi.hpp>
 #include "matrix.h"
@@ -9,6 +11,7 @@
 #include "multiply.h"
 #include "constant.h"
 #include "mpi.h"
+#include "debug.h"
 
 const size_t SIZE = 1000L;
 const size_t DIM_SIZE = 4;

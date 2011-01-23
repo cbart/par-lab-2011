@@ -143,19 +143,6 @@ namespace debug
     // Prints function signature to std::clog;
     #define print_sig print_self_sig(__PRETTY_FUNCTION__)
 
-    void debug_range_assertion(bool range_cond, const std::string& sig)
-        throw(::std::out_of_range)
-    {
-        if(!range_cond) {
-            get_errlog_stream(DBG_ERROR_INDICATOR + sig +
-                    DBG_STRING_WHITESPACE)
-                << "Exception (std::out_of_range) occured!\n";
-            throw ::std::out_of_range("Index out of range!");
-        }
-    }
-
-    #define assert_range(cond) debug_range_assertion(cond, __PRETTY_FUNCTION__)
-
 }
 
 #endif

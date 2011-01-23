@@ -6,6 +6,8 @@
 
 
 #include <boost/mpi/communicator.hpp>
+#include <boost/mpi/environment.hpp>
+#include "debug.h"
 
 
 namespace canon
@@ -32,8 +34,8 @@ inline void assert_processors(const ::boost::mpi::communicator & comm, const ::b
 {
     if(comm.size() != PROCESSORS)
     {
-        ::std::cerr << "Please run with " << PROCESSORS << " processors!\n";
-        ::std::cerr << "Aborting..." << ::std::endl;
+        ::debug::err << "Please run with " << PROCESSORS << " processors!\n";
+        ::debug::err << "Aborting..." << ::std::endl;
         env.abort(-1);
     }
 }
