@@ -13,8 +13,10 @@ namespace canon
 {
 
 
+// possible layouts
 typedef ::boost::numeric::ublas::row_major row_major;
 typedef ::boost::numeric::ublas::column_major col_major;
+
 
 
 template<typename element_t, typename layout_t, size_t size>

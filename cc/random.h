@@ -32,6 +32,7 @@ public:
         throw();
     ~random_generator()
         throw();
+    result_t operator()();
 };
 
 
@@ -49,6 +50,13 @@ template<typename result_t>
 random_generator<result_t>::~random_generator()
     throw()
 {
+}
+
+
+template<typename result_t>
+typename random_generator<result_t>::result_type random_generator<result_t>::operator()()
+{
+    return generator();
 }
 
 
