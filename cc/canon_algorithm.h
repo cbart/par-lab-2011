@@ -69,7 +69,7 @@ canon_prod<real_t, SIZE>::~canon()
 
 
 template<typename real_t, size_t SIZE>
-void canon_prod<real_t, SIZE>::operator()(
+inline void canon_prod<real_t, SIZE>::operator()(
         row_matrix_type & product_result_partial,
         row_matrix_type & product_first_argument_partial,
         col_matrix_type & product_second_argument_partial)
