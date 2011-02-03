@@ -9,6 +9,7 @@ namespace canon
 {
 
 
+// Constant generator.
 template<typename result_t, long value>
 result_t constant()
 {

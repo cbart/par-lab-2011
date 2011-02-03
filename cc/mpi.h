@@ -23,19 +23,24 @@ typedef ::boost::shared_array<rank_type> ranks_array_type;
 
 const size_t RANKS_ARRAY_SIZE = 2;
 
-// ranks_array[SOURCE_RANK_INDEX] is the source rank
+// ranks_array[`SOURCE_RANK_INDEX`] is the source rank
 const size_t SOURCE_RANK_INDEX = 0;
 
-// ranks_array[DESTINATION_RANK_INDEX] is the destination rank
+// ranks_array[`DESTINATION_RANK_INDEX`] is the destination rank
 const size_t DESTINATION_RANK_INDEX = 1;
 
+// Possible direction arguments for `shift`
 const int DIRECTION_VERTICAL = 0;
 const int DIRECTION_HORIZONTAL = 1;
 
+// Possible displacement arguments for `shift`
 const int DISPLACEMENT_UPWARD = 1;
 const int DISPLACEMENT_DOWNWARD = -1;
 
 
+// Creates cartesian square sphere
+// The "square sphere" means that the topology is a cartesian square
+// of `DIM_SIZE` * `DIM_SIZE` nodes and there is a period in both dimensions.
 template<size_t DIM_SIZE>
 inline ::boost::mpi::communicator cart_square_sphere_create()
 {
@@ -49,6 +54,7 @@ inline ::boost::mpi::communicator cart_square_sphere_create()
 }
 
 
+// Fails if mpi wasn't run with `PROCESSORS` amount of processors
 template<size_t PROCESSORS>
 inline void assert_processors(
         const ::boost::mpi::communicator & comm,
@@ -63,10 +69,13 @@ inline void assert_processors(
 }
 
 
+// Returns a ranks array which `SOURCE_RANK_INDEX`st element
+// is the source rank and the `DESTINATION_RANK_INDEX`st element
+// is the destination rank.
 template<int DIRECTION, int DISPL>
 inline ranks_array_type shift(const ::boost::mpi::communicator & comm)
 {
-    ranks_array_type ranks(new rank_type[2]);
+    ranks_array_type ranks(new rank_type[RANKS_ARRAY_SIZE]);
     MPI_Cart_shift(comm, DIRECTION, DISPL, & ranks[SOURCE_RANK_INDEX], & ranks[DESTINATION_RANK_INDEX]);
     return ranks;
 }

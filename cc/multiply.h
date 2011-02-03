@@ -14,7 +14,9 @@ namespace canon
 {
 
 
-// performs result += left * right;
+// Runs ublas FORTRAN procedure to perform a matrix product
+// it's actually equal to:
+//   result += left * right
 template<typename element_t, size_t size>
 void prod(
         typename square_matrix<element_t, row_major, size>::type & result,
@@ -22,6 +24,7 @@ void prod(
         typename square_matrix<element_t, col_major, size>::type & right)
     throw()
 {
+    // `noalias` uses proxy in order not to copy additional memory.
     ::boost::numeric::ublas::noalias(result) += ::boost::numeric::ublas::prod(left, right);
 }
 

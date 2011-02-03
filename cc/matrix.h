@@ -14,12 +14,12 @@ namespace canon
 {
 
 
-// possible layouts
+// Possible matrix layouts
 typedef ::boost::numeric::ublas::row_major row_major;
 typedef ::boost::numeric::ublas::column_major col_major;
 
 
-
+// Just typedef for boost's bounded_matrix
 template<typename element_t, typename layout_t, size_t size>
 class square_matrix
 {

@@ -14,6 +14,8 @@ namespace canon
 {
 
 
+// Random numbers generator. To run just create an instance yourself
+// and run the operator() to get next random number.
 template<typename result_t>
 class random_generator
 {
