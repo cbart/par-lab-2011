@@ -7,6 +7,7 @@
 
 #include <boost/numeric/ublas/matrix_expression.hpp>
 #include "matrix.h"
+#include "exceptions.h"
 
 
 namespace canon
