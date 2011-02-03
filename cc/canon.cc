@@ -25,7 +25,7 @@ const size_t DIM_SIZE = 4;
 typedef double real_type;
 
 // The algorithm we work with.
-typedef ::canon::algorithm::canon_prod<real_type, SIZE> canon_prod_type;
+typedef ::canon::algorithm::canon_prod<real_type, SIZE, DIM_SIZE> canon_prod_type;
 
 // The maintenance function.
 void run_product(
@@ -59,7 +59,7 @@ inline void run_product(
     fill<real_type, col_major, SIZE>(b, generator);
     fill<real_type, row_major, SIZE>(c, & constant<real_type, 0>);
     // Initiate the algorithm.
-    algorithm::canon_prod<real_type, SIZE> canon_product(cart_2d, local_product);
+    canon_prod_type canon_product(cart_2d, local_product);
     // Run the algorithm.
     canon_product(c, a, b);
 }

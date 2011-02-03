@@ -16,7 +16,7 @@ namespace algorithm
 {
 
 
-template<typename real_t, size_t SIZE>
+template<typename real_t, size_t SIZE, size_t DIM_SIZE>
 class canon_prod
 {
 public:
@@ -48,8 +48,8 @@ public:
 };
 
 
-template<typename real_t, size_t SIZE>
-canon_prod<real_t, SIZE>::canon_prod(
+template<typename real_t, size_t SIZE, size_t DIM_SIZE>
+canon_prod<real_t, SIZE, DIM_SIZE>::canon_prod(
         const communicator_type & cart_2d,
         product_function_type local_product)
   : cart_2d(cart_2d),
@@ -62,14 +62,14 @@ canon_prod<real_t, SIZE>::canon_prod(
 }
 
 
-template<typename real_t, size_t SIZE>
-canon_prod<real_t, SIZE>::~canon()
+template<typename real_t, size_t SIZE, size_t DIM_SIZE>
+canon_prod<real_t, SIZE, DIM_SIZE>::~canon()
 {
 }
 
 
-template<typename real_t, size_t SIZE>
-inline void canon_prod<real_t, SIZE>::operator()(
+template<typename real_t, size_t SIZE, size_t DIM_SIZE>
+inline void canon_prod<real_t, SIZE, DIM_SIZE>::operator()(
         row_matrix_type & product_result_partial,
         row_matrix_type & product_first_argument_partial,
         col_matrix_type & product_second_argument_partial)
