@@ -108,9 +108,9 @@ inline void canon_prod<real_t, SIZE, DIM_SIZE>::operator()(
             product_first_argument_partial,
             product_second_argument_partial);
     local_product(
-            product_result_partial,
-            product_first_argument_partial,
-            product_second_argument_partial);
+            * result_partial,
+            * first_argument_partial_current,
+            * second_argument_partial_current);
     clear_partials();
 }
 
