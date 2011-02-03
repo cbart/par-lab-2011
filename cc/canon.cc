@@ -3,7 +3,6 @@
 
 #define DEBUGLEVEL 3
 
-#include <iostream>
 #include <boost/mpi.hpp>
 #include "matrix.h"
 #include "random.h"
@@ -28,7 +27,7 @@ typedef double real_type;
 typedef ::canon::algorithm::canon_prod<real_type, SIZE, DIM_SIZE> canon_prod_type;
 
 // The maintenance function.
-void run_product(
+int run_product(
         const ::boost::mpi::communicator & cart_2d,
         const canon_prod_type::product_function_type local_product);
 
@@ -39,12 +38,12 @@ int main(int argc, char * * argv)
     ::boost::mpi::environment env(argc, argv);
     ::boost::mpi::communicator cart_2d = ::canon::mpi::cart_square_sphere_create<DIM_SIZE>();
     mpi::assert_processors<DIM_SIZE * DIM_SIZE>(cart_2d, env);
-    run_product(cart_2d, prod<real_type, SIZE>);
-    return 0;
+    int error_code = run_product(cart_2d, prod<real_type, SIZE>);
+    return error_code;
 }
 
 
-inline void run_product(
+inline int run_product(
         const ::boost::mpi::communicator & cart_2d,
         const canon_prod_type::product_function_type local_product)
 {
@@ -62,4 +61,5 @@ inline void run_product(
     canon_prod_type canon_product(cart_2d, local_product);
     // Run the algorithm.
     canon_product(c, a, b);
+    return 0;
 }
