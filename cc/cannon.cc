@@ -23,14 +23,14 @@
 // The size of a single parial matrix.
 const size_t SIZE = 500L;
 
-// The MPI cart will be a `DIM_SIZE` x `DIM_SIZE` square.
-const size_t DIM_SIZE = 4;
+// The MPI cart will be a `CART_SIZE` x `CART_SIZE` square.
+const size_t CART_SIZE = 4;
 
 // The type we work with.
 typedef double real_type;
 
 // The algorithm we work with.
-typedef ::cannon::algorithm::cannon_prod<real_type, SIZE, DIM_SIZE> cannon_prod_type;
+typedef ::cannon::algorithm::cannon_prod<real_type, SIZE, CART_SIZE> cannon_prod_type;
 
 // The maintenance function.
 int run_product(
@@ -41,8 +41,8 @@ int run_product(
 int main(int argc, char * * argv)
 {
     ::boost::mpi::environment env(argc, argv);
-    ::boost::mpi::communicator cart_2d = ::cannon::mpi::cart_square_sphere_create<DIM_SIZE>();
-    ::cannon::mpi::assert_processors<DIM_SIZE * DIM_SIZE>(cart_2d, env);
+    ::boost::mpi::communicator cart_2d = ::cannon::mpi::cart_square_sphere_create<CART_SIZE>();
+    ::cannon::mpi::assert_processors<CART_SIZE * CART_SIZE>(cart_2d, env);
     int error_code = run_product(cart_2d, ::cannon::prod<real_type, SIZE>);
     return error_code;
 }

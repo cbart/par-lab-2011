@@ -8,7 +8,13 @@ LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed
 INCLUDES=-I${BOOST_INCLUDES}
 LIBRARIES=-L${BOOST_LIBS}
 LIBS=-lboost_mpi -lboost_serialization
+
 all:
 	@export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${BOOST_LIBS}
 	@export LD_RUN_PATH=${BOOST_LIBS}:${LD_RUN_PATH}
-	${CXX} canon.cc ${STANDARD} ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBRARIES} ${LIBS} -o canon
+	${CXX} cannon.cc ${STANDARD} ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBRARIES} ${LIBS} -o cannon
+
+clean:
+	@rm -f cannon
+
+.PHONY: all clean
