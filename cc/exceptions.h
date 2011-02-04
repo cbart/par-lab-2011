@@ -21,11 +21,12 @@ const int EXCEPTION_ERROR = -1;
 }  // namespace canon
 
 
+#ifdef BOOST_NO_EXCEPTIONS
+
+
 namespace boost
 {
 
-
-#ifdef BOOST_NO_EXCEPTIONS
 
 void throw_exception(const ::std::exception & exception)
 {
@@ -33,10 +34,11 @@ void throw_exception(const ::std::exception & exception)
     comm.abort(::canon::exception::EXCEPTION_ERROR);
 }
 
-#endif
-
 
 }  // namespace boost
+
+
+#endif
 
 
 #endif
