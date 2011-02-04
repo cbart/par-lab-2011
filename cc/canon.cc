@@ -15,7 +15,7 @@
 #include "canon_algorithm.h"
 
 // The size of a single parial matrix.
-const size_t SIZE = 1000L;
+const size_t SIZE = 500L;
 
 // The MPI cart will be a `DIM_SIZE` x `DIM_SIZE` square.
 const size_t DIM_SIZE = 4;
@@ -52,13 +52,15 @@ inline int run_product(
     canon_prod_type::row_matrix_type a(SIZE, SIZE);
     canon_prod_type::col_matrix_type b(SIZE, SIZE);
     canon_prod_type::row_matrix_type c(SIZE, SIZE);
+    canon_prod_type::row_matrix_type row_temp(SIZE, SIZE);
+    canon_prod_type::col_matrix_type col_temp(SIZE, SIZE);
     // Generate pseudo-random values.
     random_generator<real_type> generator;
     fill<real_type, row_major, SIZE>(a, generator);
     fill<real_type, col_major, SIZE>(b, generator);
     fill<real_type, row_major, SIZE>(c, & constant<real_type, 0>);
     // Initiate the algorithm.
-    canon_prod_type canon_product(cart_2d, local_product);
+    canon_prod_type canon_product(cart_2d, local_product, row_temp, col_temp);
     // Run the algorithm.
     canon_product(c, a, b);
     return 0;
