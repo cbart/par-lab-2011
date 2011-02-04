@@ -52,7 +52,7 @@ inline typename square_matrix<element_t, layout_t, size>::element_type * square_
 }
 
 
-// Bounded array implementation
+// Bounded array's begin (taking container's inner raw pointer) implementation
 
 // template<typename element_t, typename layout_t, size_t size>
 // inline typename square_matrix<element_t, layout_t, size>::element_type * square_matrix<element_t, layout_t, size>::begin(type * matrix)

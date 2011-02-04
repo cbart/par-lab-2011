@@ -67,8 +67,8 @@ private:
     col_matrix_type * col_temp;
     mutable ::boost::array<mpi_request_type, 4> mpi_requests;
 public:
-    // Creates the algorithm framework, can reuse
-    // the `row_temp` and `col_temp`
+    // Creates the algorithm framework,
+    // reuses `row_temp` and `col_temp`
     // through sequential runs.
     cannon_prod(
             const communicator_type & cart_2d,
@@ -86,15 +86,22 @@ public:
             col_matrix_type & right)
         throw();
 private:
+    // Assigns current and temp inner
+    // algorithm's pointers.
     void init_partials(
             row_matrix_type & result,
             row_matrix_type & left,
             col_matrix_type & right)
         throw();
+    // Swaps temp with current pointers.
     void swap_partials()
         throw();
+    // Performs nonblocking send on current pointers
+    // and nonblocing receive on temp pointers
+    // according to Cannon's algorithm.
     void ishift_partials()
         throw();
+    // Waits for all requests performed by `ishift_partials`.
     void wait()
         throw();
 };
