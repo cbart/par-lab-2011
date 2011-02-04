@@ -1,8 +1,8 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__MULTIPLY__H__
-#define __CANON__MULTIPLY__H__
+#ifndef __CANNON__MULTIPLY__H__
+#define __CANNON__MULTIPLY__H__
 
 
 #include <boost/numeric/ublas/matrix_expression.hpp>
@@ -10,7 +10,7 @@
 #include "exceptions.h"
 
 
-namespace canon
+namespace cannon
 {
 
 
@@ -29,7 +29,7 @@ void prod(
 }
 
 
-}  // namespace canon
+}  // namespace cannon
 
 
 #endif

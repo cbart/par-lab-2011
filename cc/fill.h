@@ -1,15 +1,15 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__FILL__H__
-#define __CANON__FILL__H__
+#ifndef __CANNON__FILL__H__
+#define __CANNON__FILL__H__
 
 
 #include <algorithm>
 #include "matrix.h"
 
 
-namespace canon
+namespace cannon
 {
 
 
@@ -22,7 +22,7 @@ void fill(typename square_matrix<element_t, layout_t, size>::type & matrix, gene
 }
 
 
-}  // namespace canon
+}  // namespace cannon
 
 
 #endif

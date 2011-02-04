@@ -1,8 +1,8 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__RANDOM__H__
-#define __CANON__RANDOM__H__
+#ifndef __CANNON__RANDOM__H__
+#define __CANNON__RANDOM__H__
 
 
 #include <boost/random/linear_congruential.hpp>
@@ -10,7 +10,7 @@
 #include <boost/random/variate_generator.hpp>
 
 
-namespace canon
+namespace cannon
 {
 
 
@@ -62,7 +62,7 @@ typename random_generator<result_t>::result_type random_generator<result_t>::ope
 }
 
 
-}  // namespace canon
+}  // namespace cannon
 
 
 #endif

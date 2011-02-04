@@ -1,11 +1,11 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__CONSTANT__H__
-#define __CANON__CONSTANT__H__
+#ifndef __CANNON__CONSTANT__H__
+#define __CANNON__CONSTANT__H__
 
 
-namespace canon
+namespace cannon
 {
 
 
@@ -17,7 +17,7 @@ result_t constant()
 }
 
 
-}  // namespace canon
+}  // namespace cannon
 
 
 #endif

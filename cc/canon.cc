@@ -30,43 +30,43 @@ const size_t DIM_SIZE = 4;
 typedef double real_type;
 
 // The algorithm we work with.
-typedef ::canon::algorithm::canon_prod<real_type, SIZE, DIM_SIZE> canon_prod_type;
+typedef ::cannon::algorithm::cannon_prod<real_type, SIZE, DIM_SIZE> cannon_prod_type;
 
 // The maintenance function.
 int run_product(
         const ::boost::mpi::communicator & cart_2d,
-        const canon_prod_type::product_function_type local_product);
+        const cannon_prod_type::product_function_type local_product);
 
 
 int main(int argc, char * * argv)
 {
     ::boost::mpi::environment env(argc, argv);
-    ::boost::mpi::communicator cart_2d = ::canon::mpi::cart_square_sphere_create<DIM_SIZE>();
-    ::canon::mpi::assert_processors<DIM_SIZE * DIM_SIZE>(cart_2d, env);
-    int error_code = run_product(cart_2d, ::canon::prod<real_type, SIZE>);
+    ::boost::mpi::communicator cart_2d = ::cannon::mpi::cart_square_sphere_create<DIM_SIZE>();
+    ::cannon::mpi::assert_processors<DIM_SIZE * DIM_SIZE>(cart_2d, env);
+    int error_code = run_product(cart_2d, ::cannon::prod<real_type, SIZE>);
     return error_code;
 }
 
 
 inline int run_product(
         const ::boost::mpi::communicator & cart_2d,
-        const canon_prod_type::product_function_type local_product)
+        const cannon_prod_type::product_function_type local_product)
 {
-    using namespace ::canon;
+    using namespace ::cannon;
     // Create matrices.
-    canon_prod_type::row_matrix_type left(SIZE, SIZE);
-    canon_prod_type::col_matrix_type right(SIZE, SIZE);
-    canon_prod_type::row_matrix_type result(SIZE, SIZE);
-    canon_prod_type::row_matrix_type row_temp(SIZE, SIZE);
-    canon_prod_type::col_matrix_type col_temp(SIZE, SIZE);
+    cannon_prod_type::row_matrix_type left(SIZE, SIZE);
+    cannon_prod_type::col_matrix_type right(SIZE, SIZE);
+    cannon_prod_type::row_matrix_type result(SIZE, SIZE);
+    cannon_prod_type::row_matrix_type row_temp(SIZE, SIZE);
+    cannon_prod_type::col_matrix_type col_temp(SIZE, SIZE);
     // Generate pseudo-random values.
     random_generator<real_type> generator;
     fill<real_type, row_major, SIZE>(left, generator);
     fill<real_type, col_major, SIZE>(right, generator);
     fill<real_type, row_major, SIZE>(result, & constant<real_type, 0>);
     // Initiate the algorithm.
-    canon_prod_type canon_product(cart_2d, local_product, row_temp, col_temp);
+    cannon_prod_type cannon_product(cart_2d, local_product, row_temp, col_temp);
     // Run the algorithm.
-    canon_product(result, left, right);
+    cannon_product(result, left, right);
     return 0;
 }

@@ -1,8 +1,8 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__MATRIX__H__
-#define __CANON__MATRIX__H__
+#ifndef __CANNON__MATRIX__H__
+#define __CANNON__MATRIX__H__
 
 
 #include <boost/numeric/ublas/matrix.hpp>
@@ -10,7 +10,7 @@
 #include <vector>
 
 
-namespace canon
+namespace cannon
 {
 
 
@@ -32,7 +32,7 @@ public:
 };
 
 
-}  // namespace canon
+}  // namespace cannon
 
 
 #endif

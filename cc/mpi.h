@@ -1,8 +1,8 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__MPI__H__
-#define __CANON__MPI__H__
+#ifndef __CANNON__MPI__H__
+#define __CANNON__MPI__H__
 
 
 #include <boost/mpi/communicator.hpp>
@@ -11,7 +11,7 @@
 #include "debug.h"
 
 
-namespace canon
+namespace cannon
 {
 namespace mpi
 {
@@ -82,7 +82,7 @@ inline ranks_array_type shift(const ::boost::mpi::communicator & comm)
 
 
 }  // namespace mpi
-}  // namespace canon
+}  // namespace cannon
 
 
 

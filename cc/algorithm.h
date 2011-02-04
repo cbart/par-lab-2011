@@ -1,8 +1,8 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
-#ifndef __CANON__ALGORITHM__H__
-#define __CANON__ALGORITHM__H__
+#ifndef __CANNON__ALGORITHM__H__
+#define __CANNON__ALGORITHM__H__
 
 
 #include <algorithm>
@@ -15,17 +15,17 @@
 #include "mpi.h"
 
 
-namespace canon
+namespace cannon
 {
 namespace algorithm
 {
 
 
-const int CANON_ALGORITHM_MPI_TAG = 42;
+const int CANNON_ALGORITHM_MPI_TAG = 42;
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-class canon_prod
+class cannon_prod
 {
 public:
     typedef real_t real_type;
@@ -58,13 +58,13 @@ public:
     // Creates the algorithm framework, can reuse
     // the `row_temp` and `col_temp`
     // through sequential runs.
-    canon_prod(
+    cannon_prod(
             const communicator_type & cart_2d,
             product_function_type local_product,
             row_matrix_type & row_temp,
             col_matrix_type & col_temp)
         throw();
-    ~canon_prod()
+    ~cannon_prod()
         throw();
     // Performs the multiplication.
     //   result += first * second
@@ -89,7 +89,7 @@ private:
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-canon_prod<real_t, SIZE, DIM_SIZE>::canon_prod(
+cannon_prod<real_t, SIZE, DIM_SIZE>::cannon_prod(
         const communicator_type & cart_2d,
         product_function_type local_product,
         row_matrix_type & row_temp,
@@ -110,13 +110,13 @@ canon_prod<real_t, SIZE, DIM_SIZE>::canon_prod(
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-canon_prod<real_t, SIZE, DIM_SIZE>::~canon()
+cannon_prod<real_t, SIZE, DIM_SIZE>::~cannon()
 {
 }
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-inline void canon_prod<real_t, SIZE, DIM_SIZE>::operator()(
+inline void cannon_prod<real_t, SIZE, DIM_SIZE>::operator()(
         row_matrix_type & result,
         row_matrix_type & left,
         col_matrix_type & right)
@@ -135,34 +135,34 @@ inline void canon_prod<real_t, SIZE, DIM_SIZE>::operator()(
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-inline void canon_prod<real_t, SIZE, DIM_SIZE>::ishift_partials()
+inline void cannon_prod<real_t, SIZE, DIM_SIZE>::ishift_partials()
     throw()
 {
     mpi_requests[0] = cart_2d.isend(
             vertical_ranks[mpi::DESTINATION_RANK_INDEX],
-            CANON_ALGORITHM_MPI_TAG,
+            CANNON_ALGORITHM_MPI_TAG,
             left_current->data().begin(),
             SIZE * SIZE);
     mpi_requests[1] = cart_2d.irecv(
             vertical_ranks[mpi::SOURCE_RANK_INDEX],
-            CANON_ALGORITHM_MPI_TAG,
+            CANNON_ALGORITHM_MPI_TAG,
             left_temp->data().begin(),
             SIZE * SIZE);
     mpi_requests[2] = cart_2d.isend(
             horizontal_ranks[mpi::DESTINATION_RANK_INDEX],
-            CANON_ALGORITHM_MPI_TAG,
+            CANNON_ALGORITHM_MPI_TAG,
             right_current->data().begin(),
             SIZE * SIZE);
     mpi_requests[3] = cart_2d.irecv(
             vertical_ranks[mpi::SOURCE_RANK_INDEX],
-            CANON_ALGORITHM_MPI_TAG,
+            CANNON_ALGORITHM_MPI_TAG,
             right_temp->data().begin(),
             SIZE * SIZE);
 }
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-inline void canon_prod<real_t, SIZE, DIM_SIZE>::wait()
+inline void cannon_prod<real_t, SIZE, DIM_SIZE>::wait()
     throw()
 {
     ::boost::mpi::wait_all(mpi_requests.begin(), mpi_requests.end());
@@ -170,7 +170,7 @@ inline void canon_prod<real_t, SIZE, DIM_SIZE>::wait()
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-inline void canon_prod<real_t, SIZE, DIM_SIZE>::init_partials(
+inline void cannon_prod<real_t, SIZE, DIM_SIZE>::init_partials(
         row_matrix_type & result,
         row_matrix_type & left,
         col_matrix_type & right)
@@ -185,7 +185,7 @@ inline void canon_prod<real_t, SIZE, DIM_SIZE>::init_partials(
 
 
 template<typename real_t, size_t SIZE, size_t DIM_SIZE>
-inline void canon_prod<real_t, SIZE, DIM_SIZE>::swap_partials()
+inline void cannon_prod<real_t, SIZE, DIM_SIZE>::swap_partials()
     throw()
 {
     ::std::swap(left_current, left_temp);
@@ -194,7 +194,7 @@ inline void canon_prod<real_t, SIZE, DIM_SIZE>::swap_partials()
 
 
 }  // namespace algorithm
-}  // namespace canon
+}  // namespace cannon
 
 
 #endif
