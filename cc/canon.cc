@@ -1,11 +1,14 @@
 // Author: Cezary Bartoszuk
 // Email: cbart@students.mimuw.edu.pl
 
+
 #ifndef DEBUGLEVEL
 #define DEBUGLEVEL 3
 #endif
 
-#include <boost/mpi.hpp>
+
+#include <boost/mpi/communicator.hpp>
+#include <boost/mpi/environment.hpp>
 #include "matrix.h"
 #include "random.h"
 #include "fill.h"
@@ -14,7 +17,8 @@
 #include "mpi.h"
 #include "exceptions.h"
 #include "debug.h"
-#include "canon_algorithm.h"
+#include "algorithm.h"
+
 
 // The size of a single parial matrix.
 const size_t SIZE = 500L;
@@ -36,11 +40,10 @@ int run_product(
 
 int main(int argc, char * * argv)
 {
-    using namespace ::canon;
     ::boost::mpi::environment env(argc, argv);
     ::boost::mpi::communicator cart_2d = ::canon::mpi::cart_square_sphere_create<DIM_SIZE>();
-    mpi::assert_processors<DIM_SIZE * DIM_SIZE>(cart_2d, env);
-    int error_code = run_product(cart_2d, prod<real_type, SIZE>);
+    ::canon::mpi::assert_processors<DIM_SIZE * DIM_SIZE>(cart_2d, env);
+    int error_code = run_product(cart_2d, ::canon::prod<real_type, SIZE>);
     return error_code;
 }
 
