@@ -61,9 +61,9 @@ inline int run_product(
     cannon_prod_type::col_matrix_type col_temp(SIZE, SIZE);
     // Generate pseudo-random values.
     random_generator<real_type> generator;
-    fill<real_type, row_major, SIZE>(left, generator);
-    fill<real_type, col_major, SIZE>(right, generator);
-    fill<real_type, row_major, SIZE>(result, & constant<real_type, 0>);
+    fill(left, generator);
+    fill(right, generator);
+    fill(result, & constant<real_type, 0>);
     // Initiate the algorithm.
     cannon_prod_type cannon_product(cart_2d, local_product, row_temp, col_temp);
     // Run the algorithm.

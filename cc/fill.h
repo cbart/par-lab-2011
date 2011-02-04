@@ -6,7 +6,6 @@
 
 
 #include <algorithm>
-#include "matrix.h"
 
 
 namespace cannon
@@ -14,8 +13,8 @@ namespace cannon
 
 
 // Fills given matrix with elements returned by `generator()`.
-template<typename element_t, typename layout_t, size_t size, typename generator_t>
-void fill(typename square_matrix<element_t, layout_t, size>::type & matrix, generator_t generator)
+template<typename matrix_t, typename generator_t>
+void fill(matrix_t & matrix, generator_t generator)
     throw()
 {
     ::std::generate(matrix.data().begin(), matrix.data().end(), generator);
