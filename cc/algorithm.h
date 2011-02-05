@@ -13,6 +13,7 @@
 #include <boost/mpi/nonblocking.hpp>
 #include "matrix.h"
 #include "mpi.h"
+#include "debug.h"
 
 
 namespace cannon
@@ -142,12 +143,18 @@ inline void cannon_prod<real_t, SIZE, CART_SIZE>::operator()(
     throw()
 {
     init_partials(result, left, right);
+    ::debug::info << "Partials initialized." << ::std::endl;
     for(uint32_t step = 0; step + 1 < CART_SIZE; ++step)
     {
+        ::debug::info << "Iteration " << step + 1 << "." << ::std::endl;
         ishift_partials();
+        ::debug::info << "  Partials shift requested." << ::std::endl;
         local_product(* this->result, * left_current, * right_current);
+        ::debug::info << "  Local product computed." << ::std::endl;
         wait();
+        ::debug::info << "  Partials shifted." << ::std::endl;
         swap_partials();
+        ::debug::info << "  Partials swapped." << ::std::endl;
     }
     local_product(* this->result, * left_current, * right_current);
 }
@@ -183,7 +190,7 @@ inline void cannon_prod<real_t, SIZE, CART_SIZE>::ishift_partials()
             col_matrix_concept::begin(right_current),
             SIZE * SIZE);
     mpi_requests[3] = cart_2d.irecv(
-            vertical_ranks[mpi::SOURCE_RANK_INDEX],
+            horizontal_ranks[mpi::SOURCE_RANK_INDEX],
             CANNON_ALGORITHM_MPI_TAG,
             col_matrix_concept::begin(right_temp),
             SIZE * SIZE);
