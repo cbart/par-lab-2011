@@ -23,6 +23,16 @@ namespace algorithm
 {
 
 
+namespace
+{
+
+
+static const int CANNON_ALGORITHM_MPI_TAG = 42;
+
+
+}  // namespace (unnamed)
+
+
 // The Cannon's multiply algorithm signature
 //   `real_t` The actual matrix element type
 //   `SIZE` The size of a single partial, e.g.
@@ -116,6 +126,20 @@ private:
     // Waits for all requests performed by `ishift_partials`.
     void wait()
         throw();
+    // Partial send.
+    template<typename matrix_t>
+    mpi_request_type isend(mpi::rank_type destination, matrix_t * matrix)
+        throw()
+    {
+        return cart_2d.isend(destination, CANNON_ALGORITHM_MPI_TAG, begin(matrix), SIZE * SIZE);
+    }
+    // Patrial receive.
+    template<typename matrix_t>
+    mpi_request_type irecv(mpi::rank_type source, matrix_t * matrix)
+        throw()
+    {
+        return cart_2d.irecv(source, CANNON_ALGORITHM_MPI_TAG, begin(matrix), SIZE * SIZE);
+    }
     // Returns pointer to the memory a matrix is stored.
     // Placeholder
     template<typename matrix_t>
@@ -172,7 +196,7 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::operator()(
     align_partials();
     for(uint32_t step = 0; step + 1 < CART_SIZE; ++step)
     {
-        ::debug::info << "Begin iteration " << step + 1 << "." << ::std::endl;
+        ::debug::info << "Begin iteration " << step + 1 << ".\n" << ::std::flush;
         ishift_partials();
         local_product(* this->result, * left_current, * right_current);
         wait();
@@ -183,14 +207,6 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::operator()(
 }
 
 
-namespace
-{
-
-
-static const int CANNON_ALGORITHM_MPI_TAG = 42;
-
-
-}  // namespace (unnamed)
 
 
 template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
@@ -199,33 +215,23 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::align_partials()
     mpi::coords_type coords = mpi::coords(cart_2d);
     if(coords[mpi::DIRECTION_VERTICAL] != 0)
     {
-        int step = coords[mpi::DIRECTION_VERTICAL];
-        ranks_array_type align_ranks = mpi::shift<mpi::DIRECTION_VERTICAL, mpi::DISPLACEMENT_DOWNWARD>(cart_2d, step);
-        mpi_requests[mpi::DIMS * mpi::DIRECTION_VERTICAL + 0] = cart_2d.isend(
-                align_ranks[mpi::DESTINATION_RANK_INDEX],
-                CANNON_ALGORITHM_MPI_TAG,
-                begin(left_current),
-                SIZE * SIZE);
-        mpi_requests[mpi::DIMS * mpi::DIRECTION_VERTICAL + 1] = cart_2d.irecv(
-                align_ranks[mpi::SOURCE_RANK_INDEX],
-                CANNON_ALGORITHM_MPI_TAG,
-                begin(left_temp),
-                SIZE * SIZE);
+        const int step = coords[mpi::DIRECTION_VERTICAL];
+        ranks_array_type align_ranks =
+            mpi::shift<mpi::DIRECTION_VERTICAL, mpi::DISPLACEMENT_DOWNWARD>(cart_2d, step);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_VERTICAL + 0] =
+            isend(align_ranks[mpi::DESTINATION_RANK_INDEX], left_current);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_VERTICAL + 1] =
+            irecv(align_ranks[mpi::SOURCE_RANK_INDEX], left_temp);
     }
     if(coords[mpi::DIRECTION_HORIZONTAL] != 0)
     {
-        int step = coords[mpi::DIRECTION_HORIZONTAL];
-        ranks_array_type align_ranks = mpi::shift<mpi::DIRECTION_HORIZONTAL, mpi::DISPLACEMENT_DOWNWARD>(cart_2d, step);
-        mpi_requests[mpi::DIMS * mpi::DIRECTION_HORIZONTAL + 0] = cart_2d.isend(
-                align_ranks[mpi::DESTINATION_RANK_INDEX],
-                CANNON_ALGORITHM_MPI_TAG,
-                begin(right_current),
-                SIZE * SIZE);
-        mpi_requests[mpi::DIMS * mpi::DIRECTION_HORIZONTAL + 1] = cart_2d.irecv(
-                align_ranks[mpi::SOURCE_RANK_INDEX],
-                CANNON_ALGORITHM_MPI_TAG,
-                begin(right_temp),
-                SIZE * SIZE);
+        const int step = coords[mpi::DIRECTION_HORIZONTAL];
+        ranks_array_type align_ranks =
+            mpi::shift<mpi::DIRECTION_HORIZONTAL, mpi::DISPLACEMENT_DOWNWARD>(cart_2d, step);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_HORIZONTAL + 0] =
+            isend(align_ranks[mpi::DESTINATION_RANK_INDEX], right_current);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_HORIZONTAL + 1] =
+            irecv(align_ranks[mpi::SOURCE_RANK_INDEX], right_temp);
     }
     if(coords[mpi::DIRECTION_VERTICAL] != 0)
     {
@@ -249,7 +255,7 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::align_partials()
 template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
 inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::realign_partials()
 {
-    mpi::coords_type coords = mpi::coords(cart_2d);
+    // TODO
 }
 
 
@@ -257,26 +263,10 @@ template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
 inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::ishift_partials()
     throw()
 {
-    mpi_requests[0] = cart_2d.isend(
-            vertical_ranks[mpi::DESTINATION_RANK_INDEX],
-            CANNON_ALGORITHM_MPI_TAG,
-            begin(left_current),
-            SIZE * SIZE);
-    mpi_requests[1] = cart_2d.irecv(
-            vertical_ranks[mpi::SOURCE_RANK_INDEX],
-            CANNON_ALGORITHM_MPI_TAG,
-            begin(left_temp),
-            SIZE * SIZE);
-    mpi_requests[2] = cart_2d.isend(
-            horizontal_ranks[mpi::DESTINATION_RANK_INDEX],
-            CANNON_ALGORITHM_MPI_TAG,
-            begin(right_current),
-            SIZE * SIZE);
-    mpi_requests[3] = cart_2d.irecv(
-            horizontal_ranks[mpi::SOURCE_RANK_INDEX],
-            CANNON_ALGORITHM_MPI_TAG,
-            begin(right_temp),
-            SIZE * SIZE);
+    mpi_requests[0] = isend(vertical_ranks[mpi::DESTINATION_RANK_INDEX], left_current);
+    mpi_requests[1] = irecv(vertical_ranks[mpi::SOURCE_RANK_INDEX], left_temp);
+    mpi_requests[2] = isend(horizontal_ranks[mpi::DESTINATION_RANK_INDEX], right_current);
+    mpi_requests[3] = irecv(horizontal_ranks[mpi::SOURCE_RANK_INDEX], right_temp);
 }
 
 
