@@ -120,12 +120,15 @@ private:
     // Placeholder
     template<typename matrix_t>
     real_type * begin(matrix_t * matrix)
+        throw()
     {
         return NULL;
     }
     // "Specializations" (overloaded actually)
-    real_type * begin(row_matrix_type * matrix);
-    real_type * begin(col_matrix_type * matrix);
+    real_type * begin(row_matrix_type * matrix)
+        throw();
+    real_type * begin(col_matrix_type * matrix)
+        throw();
 };
 
 
@@ -312,6 +315,7 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::swap_partials()
 template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
 typename cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::real_type *
 cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::begin(row_matrix_type * matrix)
+    throw()
 {
     return row_matrix_concept::begin(matrix);
 }
@@ -320,6 +324,7 @@ cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::begin(row_matrix_type * matrix)
 template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
 typename cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::real_type *
 cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::begin(col_matrix_type * matrix)
+    throw()
 {
     return col_matrix_concept::begin(matrix);
 }
