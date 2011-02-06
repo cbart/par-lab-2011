@@ -17,6 +17,11 @@ namespace mpi
 {
 
 
+typedef ::boost::shared_array<int> coords_type;
+
+const size_t DIMS = 2;
+
+
 typedef int rank_type;
 
 typedef ::boost::shared_array<rank_type> ranks_array_type;
@@ -45,11 +50,10 @@ template<size_t DIM_SIZE>
 inline ::boost::mpi::communicator cart_square_sphere_create()
 {
     MPI_Comm comm_cart;
-    int dims = 2;  // two dimensional
-    int dim_size[2] = {DIM_SIZE, DIM_SIZE};  // square
-    int periods[2] = {true, true};  // periods in both dimensions
+    int dim_size[DIMS] = {DIM_SIZE, DIM_SIZE};  // square
+    int periods[DIMS] = {true, true};  // periods in both dimensions
     int reorder = true;
-    MPI_Cart_create(MPI_COMM_WORLD, dims, dim_size, periods, reorder, & comm_cart);
+    MPI_Cart_create(MPI_COMM_WORLD, DIMS, dim_size, periods, reorder, & comm_cart);
     return ::boost::mpi::communicator(comm_cart, ::boost::mpi::comm_take_ownership);
 }
 
@@ -73,11 +77,19 @@ inline void assert_processors(
 // is the source rank and the `DESTINATION_RANK_INDEX`st element
 // is the destination rank.
 template<int DIRECTION, int DISPL>
-inline ranks_array_type shift(const ::boost::mpi::communicator & comm)
+inline ranks_array_type shift(const ::boost::mpi::communicator & comm, uint32_t step = 1)
 {
     ranks_array_type ranks(new rank_type[RANKS_ARRAY_SIZE]);
-    MPI_Cart_shift(comm, DIRECTION, DISPL, & ranks[SOURCE_RANK_INDEX], & ranks[DESTINATION_RANK_INDEX]);
+    MPI_Cart_shift(comm, DIRECTION, DISPL * step, & ranks[SOURCE_RANK_INDEX], & ranks[DESTINATION_RANK_INDEX]);
     return ranks;
+}
+
+
+inline coords_type coords(const ::boost::mpi::communicator & comm)
+{
+    coords_type coords_array(new int[DIMS]);
+    MPI_Cart_coords(comm, comm.rank(), DIMS, & coords_array[0]);
+    return coords_array;
 }
 
 

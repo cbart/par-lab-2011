@@ -56,6 +56,7 @@ public:
 private:
     typedef mpi::ranks_array_type ranks_array_type;
     typedef ::boost::mpi::request mpi_request_type;
+    typedef ::boost::array<mpi_request_type, 2 * mpi::DIMS> mpi_request_array_type;
 private:
     const communicator_type & cart_2d;
     const product_function_type local_product;
@@ -68,7 +69,7 @@ private:
     col_matrix_type * right_temp;
     row_matrix_type * row_temp;
     col_matrix_type * col_temp;
-    mutable ::boost::array<mpi_request_type, 4> mpi_requests;
+    mutable mpi_request_array_type mpi_requests;
 public:
     // Creates the algorithm framework,
     // reuses `row_temp` and `col_temp`
@@ -95,6 +96,14 @@ private:
             row_matrix_type & result,
             row_matrix_type & left,
             col_matrix_type & right)
+        throw();
+    // Performs initial realignment of the partials
+    // according to the Cannon's algorithm.
+    void align_partials()
+        throw();
+    // Realigns the partials after the actual algorithm
+    // so that the data is on its correct place.
+    void realign_partials()
         throw();
     // Swaps temp with current pointers.
     void swap_partials()
@@ -145,20 +154,17 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::operator()(
     throw()
 {
     init_partials(result, left, right);
-    ::debug::info << "Partials initialized." << ::std::endl;
+    align_partials();
     for(uint32_t step = 0; step + 1 < CART_SIZE; ++step)
     {
-        ::debug::info << "Iteration " << step + 1 << "." << ::std::endl;
+        ::debug::info << "Begin iteration " << step + 1 << "." << ::std::endl;
         ishift_partials();
-        ::debug::info << "  Partials shift requested." << ::std::endl;
         local_product(* this->result, * left_current, * right_current);
-        ::debug::info << "  Local product computed." << ::std::endl;
         wait();
-        ::debug::info << "  Partials shifted." << ::std::endl;
         swap_partials();
-        ::debug::info << "  Partials swapped." << ::std::endl;
     }
     local_product(* this->result, * left_current, * right_current);
+    realign_partials();
 }
 
 
@@ -170,6 +176,66 @@ static const int CANNON_ALGORITHM_MPI_TAG = 42;
 
 
 }  // namespace (unnamed)
+
+
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::align_partials()
+{
+    mpi::coords_type coords = mpi::coords(cart_2d);
+    if(coords[mpi::DIRECTION_VERTICAL] != 0)
+    {
+        int step = coords[mpi::DIRECTION_VERTICAL];
+        ranks_array_type align_ranks = mpi::shift<mpi::DIRECTION_VERTICAL, mpi::DISPLACEMENT_DOWNWARD>(cart_2d, step);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_VERTICAL + 0] = cart_2d.isend(
+                align_ranks[mpi::DESTINATION_RANK_INDEX],
+                CANNON_ALGORITHM_MPI_TAG,
+                row_matrix_concept::begin(left_current),
+                SIZE * SIZE);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_VERTICAL + 1] = cart_2d.irecv(
+                align_ranks[mpi::SOURCE_RANK_INDEX],
+                CANNON_ALGORITHM_MPI_TAG,
+                row_matrix_concept::begin(left_temp),
+                SIZE * SIZE);
+    }
+    if(coords[mpi::DIRECTION_HORIZONTAL] != 0)
+    {
+        int step = coords[mpi::DIRECTION_HORIZONTAL];
+        ranks_array_type align_ranks = mpi::shift<mpi::DIRECTION_HORIZONTAL, mpi::DISPLACEMENT_DOWNWARD>(cart_2d, step);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_HORIZONTAL + 0] = cart_2d.isend(
+                align_ranks[mpi::DESTINATION_RANK_INDEX],
+                CANNON_ALGORITHM_MPI_TAG,
+                col_matrix_concept::begin(right_current),
+                SIZE * SIZE);
+        mpi_requests[mpi::DIMS * mpi::DIRECTION_HORIZONTAL + 1] = cart_2d.irecv(
+                align_ranks[mpi::SOURCE_RANK_INDEX],
+                CANNON_ALGORITHM_MPI_TAG,
+                col_matrix_concept::begin(right_temp),
+                SIZE * SIZE);
+    }
+    if(coords[mpi::DIRECTION_VERTICAL] != 0)
+    {
+        const size_t offset = mpi::DIMS * mpi::DIRECTION_VERTICAL;
+        ::boost::mpi::wait_all(
+                mpi_requests.begin() + offset,
+                mpi_requests.begin() + offset + mpi::DIMS);
+        ::std::swap(left_current, left_temp);
+    }
+    if(coords[mpi::DIRECTION_HORIZONTAL] != 0)
+    {
+        const size_t offset = mpi::DIMS * mpi::DIRECTION_HORIZONTAL;
+        ::boost::mpi::wait_all(
+                mpi_requests.begin() + offset,
+                mpi_requests.begin() + offset + mpi::DIMS);
+        ::std::swap(right_current, right_temp);
+    }
+}
+
+
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::realign_partials()
+{
+    mpi::coords_type coords = mpi::coords(cart_2d);
+}
 
 
 template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
