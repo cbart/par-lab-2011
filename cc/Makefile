@@ -1,4 +1,4 @@
-CXX=mpiCC -Wall -Wpointer-arith -pedantic
+CXX=mpiCC -Wall -Wpointer-arith -pedantic -std=gnu++0x
 ARCH=-march=native
 CXXFLAGS=-O3 -fno-exceptions
 LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed -Wl,--rpath
