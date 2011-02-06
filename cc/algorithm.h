@@ -146,6 +146,7 @@ private:
     real_type * begin(matrix_t * matrix)
         throw()
     {
+        ::debug::info << "DUPA" << ::std::endl;
         return NULL;
     }
     // "Specializations" (overloaded actually)
@@ -193,17 +194,20 @@ inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::operator()(
     throw()
 {
     init_partials(result, left, right);
-    align_partials();
+    //align_partials();
     for(uint32_t step = 0; step + 1 < CART_SIZE; ++step)
     {
         ::debug::info << "Begin iteration " << step + 1 << ".\n" << ::std::flush;
         ishift_partials();
+        ::debug::info << "Begin product.\n" << ::std::flush;
         local_product(* this->result, * left_current, * right_current);
+        ::debug::info << "Waiting for exchange.\n" << ::std::flush;
         wait();
+        ::debug::info << "Swapping partials.\n" << ::std::flush;
         swap_partials();
     }
     local_product(* this->result, * left_current, * right_current);
-    realign_partials();
+    //realign_partials();
 }
 
 

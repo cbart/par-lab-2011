@@ -5,9 +5,10 @@ LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed -Wl,--rpath
 INCLUDES=-I/usr/include/mpi -I/usr/include/boost/mpi -I/usr/lib/openmpi/include/openmpi/ompi/mpi
 LIBRARIES=-L/usr/lib
 LIBS=-lboost_mpi-mt -lboost_mpi -lboost_serialization-mt -lboost_serialization
+DEFINES=-DDEBUGLEVEL=3
 
 all:
-	${CXX} cannon.cc ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBS} -o cannon
+	${CXX} cannon.cc ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBS} ${DEFINES} -o cannon
 
 clean:
 	@rm -f cannon
