@@ -20,10 +20,10 @@
 
 
 // The size of a single parial matrix.
-const size_t SIZE = 1000L;
+const size_t SIZE = 16384;
 
 // The MPI cart will be a `CART_SIZE` x `CART_SIZE` square.
-const size_t CART_SIZE = 2;
+const size_t CART_SIZE = 4;
 
 // The type we work with.
 typedef double real_type;

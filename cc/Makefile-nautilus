@@ -1,20 +1,20 @@
 BOOST_INCLUDES=/home/users/cbart/include
 BOOST_LIBS=/home/users/cbart/lib
-CXX=mpiCC -Wall -Wpointer-arith -pedantic
+CXX=mpiCC -Wall -Wpointer-arith -pedantic -pipe
 STANDARD=-std=gnu++0x
 ARCH=-march=native
 CXXFLAGS=-O3 -fno-exceptions
 LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed
-INCLUDES=-I${BOOST_INCLUDES}
-LIBRARIES=-L${BOOST_LIBS}
+INCLUDES=-I
+LIBRARIES=-L
 LIBS=-lboost_mpi -lboost_serialization
 
 all:
-	@export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${BOOST_LIBS}
-	@export LD_RUN_PATH=${BOOST_LIBS}:${LD_RUN_PATH}
-	${CXX} cannon.cc ${STANDARD} ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBRARIES} ${LIBS} -o cannon
+        @export LD_LIBRARY_PATH=:
+        @export LD_RUN_PATH=:
+         cannon.cc        -o cannon
 
 clean:
-	@rm -f cannon
+        @rm -f cannon
 
 .PHONY: all clean
