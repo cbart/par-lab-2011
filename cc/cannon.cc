@@ -26,14 +26,16 @@ const size_t SIZE = 16384;
 // The MPI cart will be a `CART_SIZE` x `CART_SIZE` square.
 const size_t CART_SIZE = 4;
 
+
 // The type we work with.
 typedef double real_type;
 
-// Storage type
+// Storage type - we use unbounded_array because of performance reasons
 typedef ::boost::numeric::ublas::unbounded_array<real_type> storage_type;
 
 // The algorithm we work with.
 typedef ::cannon::algorithm::cannon_prod<real_type, storage_type, SIZE, CART_SIZE> cannon_prod_type;
+
 
 // The maintenance function.
 int run_product(
