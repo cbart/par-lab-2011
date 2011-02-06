@@ -17,11 +17,11 @@ namespace cannon
 // Runs ublas FORTRAN procedure to perform a matrix product
 // it's actually equal to:
 //   result += left * right
-template<typename element_t, size_t size>
+template<typename element_t, typename storage_t, size_t size>
 void prod(
-        typename square_matrix<element_t, row_major, size>::type & result,
-        typename square_matrix<element_t, row_major, size>::type & left,
-        typename square_matrix<element_t, col_major, size>::type & right)
+        typename square_matrix_concept<element_t, storage_t, row_major, size>::type & result,
+        typename square_matrix_concept<element_t, storage_t, row_major, size>::type & left,
+        typename square_matrix_concept<element_t, storage_t, col_major, size>::type & right)
     throw()
 {
     // `noalias` uses proxy in order not to copy additional memory.

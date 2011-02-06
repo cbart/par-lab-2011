@@ -5,16 +5,16 @@ STANDARD=-std=gnu++0x
 ARCH=-march=native
 CXXFLAGS=-O3 -fno-exceptions
 LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed
-INCLUDES=-I
-LIBRARIES=-L
+INCLUDES=-I${BOOST_INCLUDES}
+LIBRARIES=-L${BOOST_LIBS}
 LIBS=-lboost_mpi -lboost_serialization
 
 all:
-        @export LD_LIBRARY_PATH=:
-        @export LD_RUN_PATH=:
-         cannon.cc        -o cannon
+	@export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${BOOST_LIBS}
+	@export LD_RUN_PATH=${LD_RUN_PATH}:${BOOST_LIBS}
+	${CXX} cannon.cc ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBS} -o cannon
 
 clean:
-        @rm -f cannon
+	@rm -f cannon
 
 .PHONY: all clean

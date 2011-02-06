@@ -19,46 +19,50 @@ typedef ::boost::numeric::ublas::row_major row_major;
 typedef ::boost::numeric::ublas::column_major col_major;
 
 
-// Just typedef for boost's bounded_matrix
-template<typename element_t, typename layout_t, size_t size>
-class square_matrix
+// Square matrix concept
+template<typename element_t, typename storage_t, typename layout_t, size_t SIZE>
+class square_matrix_concept
 {
 public:
     typedef element_t element_type;
     typedef layout_t layout_type;
-    // ::std::vector based allocation - considered faster and more parallel-able
-
-    typedef ::boost::numeric::ublas::unbounded_array<element_type> storage_type;
+    typedef storage_t storage_type;
     typedef ::boost::numeric::ublas::matrix<element_type, layout_type, storage_type> type;
-
-    // ::boost::numeric::bounded_array based allocation - enables full-stack allocation
-
-    //typedef ::boost::numeric::ublas::bounded_matrix<element_type, size, size, layout_type> type;
-
-    // Returns raw pointer to container begin (needed because ::std::vector uses fancy-iterators).
+public:
     static element_type * begin(type * matrix);
-
-private:
-    square_matrix();
-    square_matrix(const square_matrix & copy);
 };
 
 
-// template<typename element_t, typename layout_t, size_t size>
-// inline typename square_matrix<element_t, layout_t, size>::element_type * square_matrix<element_t, layout_t, size>::begin(type * matrix)
-// {
-//     return & matrix->data()[0];
-// }
-
-
-// Bounded array's begin (taking container's inner raw pointer) implementation
-
-template<typename element_t, typename layout_t, size_t size>
-inline typename square_matrix<element_t, layout_t, size>::element_type * square_matrix<element_t, layout_t, size>::begin(type * matrix)
+template<typename element_t, typename storage_t, typename layout_t, size_t SIZE>
+typename square_matrix_concept<element_t, storage_t, layout_t, SIZE>::element_type *
+square_matrix_concept<element_t, storage_t, layout_t, SIZE>::begin(type * matrix)
 {
-   return matrix->data().begin();
+    return matrix->data().begin();
 }
 
+
+// Swuare matrix concept - vector specialization
+template<typename element_t, template<typename a_t> class allocator_template, typename layout_t, size_t SIZE>
+class square_matrix_concept<element_t, ::std::vector<element_t, allocator_template<element_t> >, layout_t, SIZE>
+{
+public:
+    typedef element_t element_type;
+    typedef layout_t layout_type;
+    typedef allocator_template<element_t> allocator_type;
+    typedef ::std::vector<element_type, allocator_type> storage_type;
+    typedef ::boost::numeric::ublas::matrix<element_type, layout_type, storage_type> type;
+public:
+    static element_type * begin(type * matrix);
+};
+
+
+template<typename element_t, template<typename a_t> class allocator_template, typename layout_t, size_t SIZE>
+typename square_matrix_concept<element_t, ::std::vector<element_t, allocator_template<element_t> >, layout_t, SIZE>::element_type *
+square_matrix_concept<element_t, ::std::vector<element_t, allocator_template<element_t> >, layout_t, SIZE>::begin(type * matrix)
+{
+    // Specialization because of vector's fancy iterators
+    return & matrix->data()[0];
+}
 
 
 }  // namespace cannon

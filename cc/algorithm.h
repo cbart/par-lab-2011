@@ -11,6 +11,7 @@
 #include <boost/mpi/communicator.hpp>
 #include <boost/mpi/request.hpp>
 #include <boost/mpi/nonblocking.hpp>
+#include <boost/numeric/ublas/storage.hpp>
 #include "matrix.h"
 #include "mpi.h"
 #include "debug.h"
@@ -31,16 +32,17 @@ namespace algorithm
 //       cartesian topology (the grid will have
 //       CART_SIZE*CART_SIZE nodes) with periods
 //       in both dimensions.
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
 class cannon_prod
 {
 public:
     typedef real_t real_type;
+    typedef storage_t storage_type;
     // Row-major matrix type
-    typedef square_matrix<real_type, row_major, SIZE> row_matrix_concept;
+    typedef square_matrix_concept<real_type, storage_type, row_major, SIZE> row_matrix_concept;
     typedef typename row_matrix_concept::type row_matrix_type;
     // Column-major matrix type
-    typedef square_matrix<real_type, col_major, SIZE> col_matrix_concept;
+    typedef square_matrix_concept<real_type, storage_type, col_major, SIZE> col_matrix_concept;
     typedef typename col_matrix_concept::type col_matrix_type;
     // Local multiplication function
     typedef ::boost::function<
@@ -108,8 +110,8 @@ private:
 };
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-cannon_prod<real_t, SIZE, CART_SIZE>::cannon_prod(
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::cannon_prod(
         const communicator_type & cart_2d,
         product_function_type local_product,
         row_matrix_type & row_temp,
@@ -129,14 +131,14 @@ cannon_prod<real_t, SIZE, CART_SIZE>::cannon_prod(
 }
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-cannon_prod<real_t, SIZE, CART_SIZE>::~cannon()
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::~cannon()
 {
 }
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-inline void cannon_prod<real_t, SIZE, CART_SIZE>::operator()(
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::operator()(
         row_matrix_type & result,
         row_matrix_type & left,
         col_matrix_type & right)
@@ -170,8 +172,8 @@ static const int CANNON_ALGORITHM_MPI_TAG = 42;
 }  // namespace (unnamed)
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-inline void cannon_prod<real_t, SIZE, CART_SIZE>::ishift_partials()
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::ishift_partials()
     throw()
 {
     mpi_requests[0] = cart_2d.isend(
@@ -197,16 +199,16 @@ inline void cannon_prod<real_t, SIZE, CART_SIZE>::ishift_partials()
 }
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-inline void cannon_prod<real_t, SIZE, CART_SIZE>::wait()
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::wait()
     throw()
 {
     ::boost::mpi::wait_all(mpi_requests.begin(), mpi_requests.end());
 }
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-inline void cannon_prod<real_t, SIZE, CART_SIZE>::init_partials(
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::init_partials(
         row_matrix_type & result,
         row_matrix_type & left,
         col_matrix_type & right)
@@ -220,8 +222,8 @@ inline void cannon_prod<real_t, SIZE, CART_SIZE>::init_partials(
 }
 
 
-template<typename real_t, size_t SIZE, size_t CART_SIZE>
-inline void cannon_prod<real_t, SIZE, CART_SIZE>::swap_partials()
+template<typename real_t, typename storage_t, size_t SIZE, size_t CART_SIZE>
+inline void cannon_prod<real_t, storage_t, SIZE, CART_SIZE>::swap_partials()
     throw()
 {
     ::std::swap(left_current, left_temp);

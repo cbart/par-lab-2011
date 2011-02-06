@@ -3,12 +3,13 @@
 
 
 #ifndef DEBUGLEVEL
-#define DEBUGLEVEL 3
+#define DEBUGLEVEL 0
 #endif
 
 
 #include <boost/mpi/communicator.hpp>
 #include <boost/mpi/environment.hpp>
+#include <boost/numeric/ublas/storage.hpp>
 #include "matrix.h"
 #include "random.h"
 #include "fill.h"
@@ -28,8 +29,11 @@ const size_t CART_SIZE = 4;
 // The type we work with.
 typedef double real_type;
 
+// Storage type
+typedef ::boost::numeric::ublas::unbounded_array<real_type> storage_type;
+
 // The algorithm we work with.
-typedef ::cannon::algorithm::cannon_prod<real_type, SIZE, CART_SIZE> cannon_prod_type;
+typedef ::cannon::algorithm::cannon_prod<real_type, storage_type, SIZE, CART_SIZE> cannon_prod_type;
 
 // The maintenance function.
 int run_product(
@@ -42,7 +46,7 @@ int main(int argc, char * * argv)
     ::boost::mpi::environment env(argc, argv);
     ::boost::mpi::communicator cart_2d = ::cannon::mpi::cart_square_sphere_create<CART_SIZE>();
     ::cannon::mpi::assert_processors<CART_SIZE * CART_SIZE>(cart_2d, env);
-    int error_code = run_product(cart_2d, ::cannon::prod<real_type, SIZE>);
+    int error_code = run_product(cart_2d, ::cannon::prod<real_type, storage_type, SIZE>);
     return error_code;
 }
 
