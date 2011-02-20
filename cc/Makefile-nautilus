@@ -1,7 +1,7 @@
 BOOST_INCLUDES=/home/users/cbart/include
 BOOST_LIBS=/home/users/cbart/lib
-CXX=mpiCC -Wall -Wpointer-arith -pedantic -pipe
 STANDARD=-std=gnu++0x
+CXX=mpiCC -Wall -Wpointer-arith -pedantic -pipe ${STANDARD}
 ARCH=-march=native
 CXXFLAGS=-O3 -fno-exceptions
 LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed
