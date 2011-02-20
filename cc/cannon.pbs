@@ -1,6 +1,6 @@
 #!/bin/sh
 #PBS -N cannon_mpi_4
-#PBS -l nodes=4:ppn=4:opteron
-#PBS -l walltime=8:00:00
+#PBS -l nodes=16:ppn=4:opteron
+#PBS -l walltime=24:00:00
 module load openmpi-x86_64
 . /home/users/cbart/par_lab_2011/cc/cannon_run.sh
