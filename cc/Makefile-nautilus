@@ -8,11 +8,12 @@ LDFLAGS=-Wl,--hash-style=gnu -Wl,--as-needed
 INCLUDES=-I${BOOST_INCLUDES}
 LIBRARIES=-L${BOOST_LIBS}
 LIBS=-lboost_mpi -lboost_serialization
+DEFINES=-DDEBUGLEVEL=0 -DMATRIXSIZE=65536 -DCARTSIZE=8
 
 all:
 	@export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${BOOST_LIBS}
 	@export LD_RUN_PATH=${LD_RUN_PATH}:${BOOST_LIBS}
-	${CXX} cannon.cc ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBS} -o cannon
+	${CXX} cannon.cc ${ARCH} ${CXXFLAGS} ${LDFLAGS} ${INCLUDES} ${LIBS} ${DEFINES} -o cannon
 
 clean:
 	@rm -f cannon
